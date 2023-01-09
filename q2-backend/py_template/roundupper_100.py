@@ -80,18 +80,27 @@ def lassoable():
     # Loops through every entity in space_data
     cowboy = next(entity for entity in space_database if isinstance(entity.metadata, SpaceCowboy) and entity.metadata.name == json_data['cowboy_name'])
 
+    # Returns 400 status code if cowboy is not found
     if (cowboy == None):
         return {'status':'error'}, 400
     
     # Creates list of lassoable animals
     lassoable_animals = []
 
+    # Loops through every entity in space_data
     for entity in space_database:
+
+        # Checks if entity is a space animal
         if isinstance(entity.metadata, SpaceAnimal):
+
+            # Calculates pythagorean distance between cowboy and animal
             pythagorean = math.sqrt((entity.location.x - cowboy.location.x)**2 + (entity.location.y - cowboy.location.y)**2)
+
+            # Adds animal to lassoable_animals if it is within the cowboy's lasso length
             if pythagorean <= cowboy.metadata.lassoLength:
                 lassoable_animals.append(LassoedAnimal(entity.metadata.type, entity.location))
 
+    # Returns 200 status code
     return { 'space_animals' : lassoable_animals }, 200
 
 
