@@ -1,4 +1,4 @@
-import { SetStateAction, Dispatch, FormEvent } from "react";
+import { SetStateAction, Dispatch, FormEvent, useEffect } from "react";
 import { TableContents } from "../Table/Table";
 
 interface AlertModalProps {
@@ -6,14 +6,24 @@ interface AlertModalProps {
 }
 
 export default function AlertModal({useContents}: AlertModalProps) {
-  function onSubmitEvent(e: FormEvent<HTMLFormElement>) {
+  function OnSubmitEvent(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // hint: the alert given is at (e.target as any).elements[0].value - ignore typescript being annoying
-    console.log((e.target as any)[0].value);
+    const newAlert = {
+      alert: (e.target as any)[0].value,
+      status: '',
+      updates: []
+    }
+    useContents((prev) => {
+      const newContents = {
+        columnTitles: prev.columnTitles,
+        rowContents: [...prev.rowContents, newAlert]
+      }
+      return newContents;
+    })
   }
   
   return (
-    <form data-testid='form' onSubmit={onSubmitEvent}>
+    <form data-testid='form' onSubmit={OnSubmitEvent}>
       <label> Add new alert: </label>
       <input type='text' id='alert' name='alert' />
       <button type='submit'> Add </button>
